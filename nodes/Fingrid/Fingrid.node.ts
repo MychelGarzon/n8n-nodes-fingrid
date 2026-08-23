@@ -357,13 +357,7 @@ export class Fingrid implements INodeType {
         default: true,
         displayOptions: {
           show: {
-            operation: [
-              "search",
-              "getData",
-              "getFileData",
-              "getMany",
-              "getUpdated",
-            ],
+            operation: ["getData", "getFileData", "getMany", "getUpdated"],
           },
         },
         description:
@@ -485,7 +479,6 @@ export class Fingrid implements INodeType {
           : await fetchSingle.call(this, endpoint, qs, i);
 
         const SIMPLIFIABLE_OPERATIONS = [
-          "search",
           "getData",
           "getFileData",
           "getMany",
