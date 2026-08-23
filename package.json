@@ -28,6 +28,7 @@
     "lintfix": "eslint nodes credentials package.json --fix",
     "lint:n8n": "n8n-node lint",
     "prepublishOnly": "npm run build && npm run lint -c .eslintrc.prepublish.js nodes credentials package.json",
+    "release": "n8n-node release",
     "test": "jest "
   },
   "files": [
