@@ -83,7 +83,9 @@ function buildDatasetRequest(
   const qs: IDataObject = {};
 
   if (operation === "get") {
-    const datasetId = this.getNodeParameter("datasetId", i) as string;
+    const datasetId = this.getNodeParameter("datasetId", i, undefined, {
+      extractValue: true,
+    }) as string;
     return { endpoint: `/datasets/${datasetId}`, qs };
   }
   if (operation === "search") {
@@ -98,7 +100,9 @@ function buildDatasetRequest(
     return { endpoint: "/datasets", qs };
   }
   if (operation === "getData") {
-    const datasetId = this.getNodeParameter("datasetId", i) as string;
+    const datasetId = this.getNodeParameter("datasetId", i, undefined, {
+      extractValue: true,
+    }) as string;
     qs.startTime = this.getNodeParameter("startTime", i) as string;
     qs.endTime = this.getNodeParameter("endTime", i) as string;
     Object.assign(
@@ -108,16 +112,22 @@ function buildDatasetRequest(
     return { endpoint: `/datasets/${datasetId}/data`, qs };
   }
   if (operation === "getLatestData") {
-    const datasetId = this.getNodeParameter("datasetId", i) as string;
+    const datasetId = this.getNodeParameter("datasetId", i, undefined, {
+      extractValue: true,
+    }) as string;
     return { endpoint: `/datasets/${datasetId}/data/latest`, qs };
   }
   if (operation === "getFile") {
-    const datasetId = this.getNodeParameter("datasetId", i) as string;
+    const datasetId = this.getNodeParameter("datasetId", i, undefined, {
+      extractValue: true,
+    }) as string;
     const fileId = this.getNodeParameter("fileId", i) as string;
     return { endpoint: `/datasets/${datasetId}/files/${fileId}`, qs };
   }
   if (operation === "getFileData") {
-    const datasetId = this.getNodeParameter("datasetId", i) as string;
+    const datasetId = this.getNodeParameter("datasetId", i, undefined, {
+      extractValue: true,
+    }) as string;
     qs.startTime = this.getNodeParameter("startTime", i) as string;
     qs.endTime = this.getNodeParameter("endTime", i) as string;
     Object.assign(
