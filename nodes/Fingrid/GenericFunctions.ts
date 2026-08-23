@@ -5,7 +5,7 @@ import type {
   JsonObject,
 } from "n8n-workflow";
 
-import { NodeApiError, NodeOperationError } from "n8n-workflow";
+import { NodeApiError, NodeOperationError, sleep } from "n8n-workflow";
 
 export const BASE_URL = "https://data.fingrid.fi/api";
 
@@ -24,10 +24,6 @@ export const PAGINATED_OPERATIONS = [
 // doesn't trip the limit mid-execution.
 const MIN_REQUEST_INTERVAL_MS = 2200;
 let lastRequestTimestamp = 0;
-
-async function sleep(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
 
 export async function respectRateLimit(): Promise<void> {
   const elapsed = Date.now() - lastRequestTimestamp;
@@ -68,7 +64,9 @@ async function requestWithRateLimitHandling(
       });
     }
 
-    throw error;
+    throw new NodeApiError(this.getNode(), error as unknown as JsonObject, {
+      itemIndex: i,
+    });
   }
 }
 
