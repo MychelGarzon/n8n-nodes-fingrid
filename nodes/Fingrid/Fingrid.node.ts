@@ -466,7 +466,7 @@ export class Fingrid implements INodeType {
 
         let results = PAGINATED_OPERATIONS.includes(operation)
           ? await fetchPaginated.call(this, endpoint, qs, i)
-          : await fetchSingle.call(this, endpoint, qs);
+          : await fetchSingle.call(this, endpoint, qs, i);
 
         const additionalOptions = this.getNodeParameter(
           "additionalOptions",

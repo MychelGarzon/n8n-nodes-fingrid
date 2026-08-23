@@ -46,6 +46,7 @@ export async function respectRateLimit(): Promise<void> {
 async function requestWithRateLimitHandling(
   this: IExecuteFunctions,
   options: IHttpRequestOptions,
+  i: number,
 ): Promise<any> {
   try {
     return await this.helpers.httpRequestWithAuthentication.call(
@@ -62,7 +63,8 @@ async function requestWithRateLimitHandling(
       throw new NodeApiError(this.getNode(), error as unknown as JsonObject, {
         message: "Fingrid API rate limit exceeded",
         description:
-          "Fingrid allows 1 request every 2 seconds per API key. Wait a moment and try again, or reduce Page Size if using Return All.",
+          "Fingrid allows 1 request every 2 seconds per API key. Wait a moment and try again, or reduce Page Size if using Return All",
+        itemIndex: i,
       });
     }
 
@@ -244,12 +246,16 @@ export async function fetchPaginated(
     await respectRateLimit();
 
     const pageQs: IDataObject = { ...qs, page, pageSize };
-    const response = await requestWithRateLimitHandling.call(this, {
-      method: "GET",
-      url: `${BASE_URL}${endpoint}`,
-      qs: pageQs,
-      json: true,
-    });
+    const response = await requestWithRateLimitHandling.call(
+      this,
+      {
+        method: "GET",
+        url: `${BASE_URL}${endpoint}`,
+        qs: pageQs,
+        json: true,
+      },
+      i,
+    );
 
     const pageData = Array.isArray(response)
       ? (response as IDataObject[])
@@ -271,13 +277,18 @@ export async function fetchSingle(
   this: IExecuteFunctions,
   endpoint: string,
   qs: IDataObject,
+  i: number,
 ): Promise<IDataObject[]> {
-  const responseData = await requestWithRateLimitHandling.call(this, {
-    method: "GET",
-    url: `${BASE_URL}${endpoint}`,
-    qs,
-    json: true,
-  });
+  const responseData = await requestWithRateLimitHandling.call(
+    this,
+    {
+      method: "GET",
+      url: `${BASE_URL}${endpoint}`,
+      qs,
+      json: true,
+    },
+    i,
+  );
 
   if (Array.isArray(responseData)) {
     return responseData as IDataObject[];
