@@ -8,6 +8,23 @@ import type {
 import { NodeOperationError } from "n8n-workflow";
 const BASE_URL = "https://data.fingrid.fi/api";
 
+// Fingrid's API allows 10 requests/minute. When Return All auto-follows
+// pages, we throttle between requests the same way Fingrid's own official
+// client does, so a large fetch doesn't trip the rate limit mid-execution.
+const MIN_REQUEST_INTERVAL_MS = 6500;
+let lastRequestTimestamp = 0;
+
+async function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function respectRateLimit(): Promise<void> {
+  const elapsed = Date.now() - lastRequestTimestamp;
+  if (elapsed < MIN_REQUEST_INTERVAL_MS) {
+    await sleep(MIN_REQUEST_INTERVAL_MS - elapsed);
+  }
+  lastRequestTimestamp = Date.now();
+}
 export class Fingrid implements INodeType {
   description: INodeTypeDescription = {
     displayName: "Fingrid",
@@ -483,43 +500,114 @@ export class Fingrid implements INodeType {
           );
         }
 
-        const responseData =
-          await this.helpers.httpRequestWithAuthentication.call(
-            this,
-            "fingridApi",
-            {
-              method: "GET",
-              url: `${BASE_URL}${endpoint}`,
-              qs,
-              json: true,
-            },
-          );
+        const PAGINATED_OPERATIONS = [
+          "search",
+          "getData",
+          "getFileData",
+          "getMultiple",
+          "getUpdated",
+        ];
 
-        if (Array.isArray(responseData)) {
+        if (PAGINATED_OPERATIONS.includes(operation)) {
+          const returnAll = this.getNodeParameter(
+            "returnAll",
+            i,
+            false,
+          ) as boolean;
+          const limit = this.getNodeParameter("limit", i, 50) as number;
+          const additionalOptions = qs as IDataObject;
+          const pageSize = (additionalOptions.pageSize as number) || 20000;
+
+          const collected: IDataObject[] = [];
+          let page = 1;
+          let lastPage = 1;
+
+          do {
+            await respectRateLimit();
+
+            const pageQs: IDataObject = {
+              ...qs,
+              page,
+              pageSize,
+            };
+
+            const response =
+              await this.helpers.httpRequestWithAuthentication.call(
+                this,
+                "fingridApi",
+                {
+                  method: "GET",
+                  url: `${BASE_URL}${endpoint}`,
+                  qs: pageQs,
+                  json: true,
+                },
+              );
+
+            const pageData = Array.isArray(response)
+              ? (response as IDataObject[])
+              : (((response as IDataObject).data as
+                  IDataObject[] | undefined) ?? []);
+
+            collected.push(...pageData);
+
+            const pagination = (response as IDataObject).pagination as
+              IDataObject | undefined;
+            lastPage = pagination ? (pagination.lastPage as number) : 1;
+
+            if (!returnAll && collected.length >= limit) {
+              break;
+            }
+
+            page += 1;
+          } while (returnAll && page <= lastPage);
+
+          const results = returnAll ? collected : collected.slice(0, limit);
+
           returnData.push(
-            ...responseData.map((item: IDataObject) => ({
-              json: item,
-              pairedItem: { item: i },
-            })),
-          );
-        } else if (
-          responseData &&
-          typeof responseData === "object" &&
-          Array.isArray((responseData as IDataObject).data)
-        ) {
-          // Paginated shape: { data: [...], pagination: {...} }
-          const dataArray = (responseData as IDataObject).data as IDataObject[];
-          returnData.push(
-            ...dataArray.map((item) => ({
+            ...results.map((item) => ({
               json: item,
               pairedItem: { item: i },
             })),
           );
         } else {
-          returnData.push({
-            json: responseData as IDataObject,
-            pairedItem: { item: i },
-          });
+          const responseData =
+            await this.helpers.httpRequestWithAuthentication.call(
+              this,
+              "fingridApi",
+              {
+                method: "GET",
+                url: `${BASE_URL}${endpoint}`,
+                qs,
+                json: true,
+              },
+            );
+
+          if (Array.isArray(responseData)) {
+            returnData.push(
+              ...responseData.map((item: IDataObject) => ({
+                json: item,
+                pairedItem: { item: i },
+              })),
+            );
+          } else if (
+            responseData &&
+            typeof responseData === "object" &&
+            Array.isArray((responseData as IDataObject).data)
+          ) {
+            const dataArray = (responseData as IDataObject)
+              .data as IDataObject[];
+            returnData.push(
+              ...dataArray.map((item) => ({
+                json: item,
+                pairedItem: { item: i },
+              })),
+            );
+          } else {
+            returnData.push({
+              json: responseData as IDataObject,
+              pairedItem: { item: i },
+            });
+          }
         }
       } catch (error) {
         if (this.continueOnFail()) {
