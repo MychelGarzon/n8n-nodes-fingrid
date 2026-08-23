@@ -22,6 +22,25 @@ describe("buildRequestParams", () => {
       expect(result.qs).toEqual({});
     });
 
+    it("builds the correct endpoint for Get Latest Data", () => {
+      const ctx = mockContext({ datasetId: "74" });
+      const result = buildRequestParams.call(
+        ctx,
+        "dataset",
+        "getLatestData",
+        0,
+      );
+      expect(result.endpoint).toBe("/datasets/74/data/latest");
+      expect(result.qs).toEqual({});
+    });
+
+    it("builds the correct endpoint for Get File", () => {
+      const ctx = mockContext({ datasetId: "74", fileId: "12345" });
+      const result = buildRequestParams.call(ctx, "dataset", "getFile", 0);
+      expect(result.endpoint).toBe("/datasets/74/files/12345");
+      expect(result.qs).toEqual({});
+    });
+
     it("builds the correct endpoint and qs for Search with search text", () => {
       const ctx = mockContext({
         search: "wind",
@@ -50,25 +69,37 @@ describe("buildRequestParams", () => {
       expect(result.qs.endTime).toBe("2026-08-02T00:00:00Z");
     });
 
-    it("throws for an unknown dataset operation", () => {
+    it("throws for an unrecognized dataset operation", () => {
       const ctx = mockContext({});
       expect(() => buildRequestParams.call(ctx, "dataset", "bogus", 0)).toThrow(
-        /Unknown dataset operation/,
+        /is not recognized/,
       );
     });
   });
 
   describe("data resource", () => {
-    it("splits and trims comma-separated dataset IDs for Get Multiple", () => {
+    it("splits and trims comma-separated dataset IDs for Get Many", () => {
       const ctx = mockContext({
         datasets: "74, 75,  192",
         startTime: "2026-08-01T00:00:00Z",
         endTime: "2026-08-02T00:00:00Z",
         additionalOptions: {},
       });
-      const result = buildRequestParams.call(ctx, "data", "getMultiple", 0);
+      // Notice we changed "getMultiple" to "getMany" to match the new UX code!
+      const result = buildRequestParams.call(ctx, "data", "getMany", 0);
       expect(result.endpoint).toBe("/data");
       expect(result.qs.datasets).toBe("74,75,192");
+    });
+
+    it("builds the correct endpoint and qs for Get Updated", () => {
+      const ctx = mockContext({
+        datasets: "74",
+        days: 14,
+        additionalOptions: {},
+      });
+      const result = buildRequestParams.call(ctx, "data", "getUpdated", 0);
+      expect(result.endpoint).toBe("/data/updates");
+      expect(result.qs.days).toBe(14);
     });
   });
 
@@ -84,10 +115,21 @@ describe("buildRequestParams", () => {
       expect(result.endpoint).toBe("/health");
     });
 
-    it("throws for an unknown resource entirely", () => {
+    it("builds the correct endpoint for Get Active Notifications", () => {
+      const ctx = mockContext({});
+      const result = buildRequestParams.call(
+        ctx,
+        "system",
+        "getActiveNotifications",
+        0,
+      );
+      expect(result.endpoint).toBe("/notifications/active");
+    });
+
+    it("throws for an unrecognized resource entirely", () => {
       const ctx = mockContext({});
       expect(() => buildRequestParams.call(ctx, "bogus", "get", 0)).toThrow(
-        /Unknown resource/,
+        /is not recognized/,
       );
     });
   });
