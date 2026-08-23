@@ -1,4 +1,30 @@
+# Changelog
+
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
 ## [Unreleased]
+
+## [0.2.6] - 2026-08-24
+
+### Fixed
+
+- Resolved all findings from `@n8n/scan-community-package` verification scan:
+  - Added missing `icon` property to the credentials class
+  - Added `usableAsTool: true` to the node description
+  - Switched `inputs`/`outputs` from string literals to `NodeConnectionTypes.Main`
+  - Wrapped all raw error re-throws in `NodeApiError`
+  - Replaced custom `setTimeout`-based sleep with n8n-workflow's own `sleep` helper
+  - Added a required author email to `package.json`
+  - Added a genuinely distinct dark-theme icon variant (previously pointed
+    both light and dark at the same file)
+- Renamed `Search` → `Get Many` (Dataset resource) to align with n8n's
+  controlled operation-naming vocabulary
+- Updated `Simplify`'s description to match n8n's suggested exact wording
+
+## [0.2.0] - 2026-08-23
 
 ### Added
 
