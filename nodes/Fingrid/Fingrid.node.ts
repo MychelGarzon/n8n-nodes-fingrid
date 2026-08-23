@@ -196,7 +196,7 @@ export class Fingrid implements INodeType {
           },
         },
         description:
-          "The numeric ID of the Fingrid dataset (find it via the Search operation, or in the dataset URL on data.fingrid.fi)",
+          "The numeric ID of the Fingrid dataset (find it via the 'Search' operation, or in the dataset URL on data.fingrid.fi)",
       },
 
       // ----------------------------------
@@ -223,7 +223,7 @@ export class Fingrid implements INodeType {
         displayOptions: {
           show: { resource: ["dataset"], operation: ["search"] },
         },
-        description: "Field to sort results by when no search text is given",
+        description: "Field to sort results by when no 'Search Text' is given",
       },
 
       // ----------------------------------
