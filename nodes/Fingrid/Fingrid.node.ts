@@ -22,7 +22,7 @@ export class Fingrid implements INodeType {
   description: INodeTypeDescription = {
     displayName: "Fingrid",
     name: "fingrid",
-    icon: { light: "file:fingrid.svg", dark: "file:fingrid.svg" },
+    icon: { light: "file:fingrid.svg", dark: "file:fingrid-dark.svg" },
     group: ["transform"],
     version: 1,
     usableAsTool: true,
