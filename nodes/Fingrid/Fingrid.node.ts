@@ -1,8 +1,11 @@
 import type {
+  IDataObject,
   IExecuteFunctions,
   INodeExecutionData,
   INodeType,
   INodeTypeDescription,
+  ILoadOptionsFunctions,
+  INodeListSearchResult,
 } from "n8n-workflow";
 
 import {
@@ -161,10 +164,27 @@ export class Fingrid implements INodeType {
       {
         displayName: "Dataset ID",
         name: "datasetId",
-        type: "string",
-        default: "",
+        type: "resourceLocator",
+        default: { mode: "list", value: "" },
         required: true,
-        placeholder: "e.g. 74",
+        modes: [
+          {
+            displayName: "From List",
+            name: "list",
+            type: "list",
+            placeholder: "Select a Dataset...",
+            typeOptions: {
+              searchListMethod: "searchDatasets",
+              searchable: true,
+            },
+          },
+          {
+            displayName: "By ID",
+            name: "id",
+            type: "string",
+            placeholder: "e.g. 74",
+          },
+        ],
         displayOptions: {
           show: {
             resource: ["dataset"],
@@ -201,7 +221,7 @@ export class Fingrid implements INodeType {
         name: "orderBy",
         type: "string",
         default: "id",
-        placeholder: "e.g. id",
+        placeholder: "e.g. ID",
         displayOptions: {
           show: { resource: ["dataset"], operation: ["search"] },
         },
@@ -221,7 +241,7 @@ export class Fingrid implements INodeType {
         displayOptions: {
           show: { resource: ["dataset"], operation: ["getFile"] },
         },
-        description: "The unique identifier of the file to retrieve.",
+        description: "The unique identifier of the file to retrieve",
       },
 
       // ----------------------------------
@@ -372,11 +392,52 @@ export class Fingrid implements INodeType {
               { name: "Descending", value: "desc" },
             ],
             default: "asc",
-            description: "Direction to sort the results.",
+            description: "Direction to sort the results",
           },
         ],
       },
     ],
+  };
+  methods = {
+    listSearch: {
+      async searchDatasets(
+        this: ILoadOptionsFunctions,
+        filter?: string,
+      ): Promise<INodeListSearchResult> {
+        const qs: IDataObject = { pageSize: 50 };
+
+        if (filter) {
+          qs.search = filter;
+        }
+
+        const responseData =
+          await this.helpers.httpRequestWithAuthentication.call(
+            this,
+            "fingridApi",
+            {
+              method: "GET",
+              url: "https://data.fingrid.fi/api/datasets",
+              qs,
+              json: true,
+            },
+          );
+
+        const datasets = Array.isArray(responseData.data)
+          ? (responseData.data as Array<{
+              nameEn?: string;
+              nameFi?: string;
+              id: number;
+            }>)
+          : [];
+
+        return {
+          results: datasets.map((dataset) => ({
+            name: dataset.nameEn || dataset.nameFi || `Dataset ${dataset.id}`,
+            value: dataset.id,
+          })),
+        };
+      },
+    },
   };
 
   async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
