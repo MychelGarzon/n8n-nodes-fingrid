@@ -376,6 +376,14 @@ export class Fingrid implements INodeType {
               "Rows to request per page from the API when 'Return All' is on. Fingrid's own client defaults range from 250 to 20000 depending on endpoint.",
           },
           {
+            displayName: "Simplify",
+            name: "simplify",
+            type: "boolean",
+            default: true,
+            description:
+              "Whether to return a streamlined version of the data without heavy metadata",
+          },
+          {
             displayName: "Sort By",
             name: "sortBy",
             type: "string",
@@ -456,9 +464,27 @@ export class Fingrid implements INodeType {
           i,
         );
 
-        const results = PAGINATED_OPERATIONS.includes(operation)
+        let results = PAGINATED_OPERATIONS.includes(operation)
           ? await fetchPaginated.call(this, endpoint, qs, i)
           : await fetchSingle.call(this, endpoint, qs);
+
+        const additionalOptions = this.getNodeParameter(
+          "additionalOptions",
+          i,
+          {},
+        ) as IDataObject;
+        const simplify = additionalOptions.simplify !== false;
+
+        if (simplify) {
+          results = results.map((item: IDataObject) => {
+            return {
+              value: item.value,
+              startTime: item.startTime,
+              endTime: item.endTime,
+              datasetId: item.datasetId,
+            };
+          });
+        }
 
         returnData.push(
           ...results.map((item) => ({
