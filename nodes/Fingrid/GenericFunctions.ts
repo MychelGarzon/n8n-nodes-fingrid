@@ -247,7 +247,7 @@ export async function fetchPaginated(
 ): Promise<IDataObject[]> {
   const returnAll = this.getNodeParameter("returnAll", i, false) as boolean;
   const limit = this.getNodeParameter("limit", i, 50) as number;
-  const pageSize = (qs.pageSize as number) || 20000;
+  const pageSize = (qs.pageSize as number) || 250;
 
   const collected: IDataObject[] = [];
   let page = 1;
