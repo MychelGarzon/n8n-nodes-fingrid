@@ -66,33 +66,31 @@ export class Fingrid implements INodeType {
           {
             name: "Get",
             value: "get",
-            description: "Get metadata for a single dataset",
+            description: "Get metadata for single dataset",
             action: "Get dataset",
           },
           {
             name: "Get Data",
             value: "getData",
-            description:
-              "Get time series data for a dataset within a time range",
+            description: "Get time series data for dataset within a time range",
             action: "Get dataset data",
           },
           {
             name: "Get File",
             value: "getFile",
-            description: "Get a single dataset file",
+            description: "Get single dataset file",
             action: "Get dataset file",
           },
           {
             name: "Get File Data",
             value: "getFileData",
-            description:
-              "Get file-based data for a dataset within a time range",
+            description: "Get file-based data for dataset within a time range",
             action: "Get dataset file data",
           },
           {
             name: "Get Latest Data",
             value: "getLatestData",
-            description: "Get the most recent data point for a dataset",
+            description: "Get the most recent data point for dataset",
             action: "Get latest dataset data",
           },
           {
@@ -151,7 +149,7 @@ export class Fingrid implements INodeType {
             name: "Get Updated",
             value: "getUpdated",
             description:
-              "Get data for datasets that changed within a recent period",
+              "Get data for datasets that changed within recent period",
             action: "Get updated data",
           },
         ],
