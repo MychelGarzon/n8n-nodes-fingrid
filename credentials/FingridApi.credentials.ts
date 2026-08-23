@@ -8,7 +8,7 @@ import type {
 export class FingridApi implements ICredentialType {
   name = "fingridApi";
   displayName = "Fingrid API";
-
+  icon = "file:../nodes/Fingrid/fingrid.svg" as const;
   documentationUrl = "https://data.fingrid.fi/en/instructions";
 
   properties: INodeProperties[] = [
