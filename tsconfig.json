@@ -16,5 +16,5 @@
     "esModuleInterop": true,
     "skipLibCheck": true
   },
-  "include": ["credentials/**/*", "nodes/**/*"]
+"include": ["credentials/**/*", "nodes/**/*", "package.json"]
 }

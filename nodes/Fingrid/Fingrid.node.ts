@@ -5,7 +5,7 @@ import type {
   INodeType,
   INodeTypeDescription,
 } from "n8n-workflow";
-import { NodeConnectionTypes, NodeOperationError } from "n8n-workflow";
+import { NodeOperationError } from "n8n-workflow";
 const BASE_URL = "https://data.fingrid.fi/api";
 
 export class Fingrid implements INodeType {
@@ -21,8 +21,8 @@ export class Fingrid implements INodeType {
     defaults: {
       name: "Fingrid",
     },
-    inputs: [NodeConnectionTypes.Main],
-    outputs: [NodeConnectionTypes.Main],
+    inputs: ["main"],
+    outputs: ["main"],
     credentials: [
       {
         name: "fingridApi",
@@ -63,23 +63,11 @@ export class Fingrid implements INodeType {
             action: "Get a dataset",
           },
           {
-            name: "Search",
-            value: "search",
-            description: "Search / list all public datasets",
-            action: "Search datasets",
-          },
-          {
             name: "Get Data",
             value: "getData",
             description:
               "Get time series data for a dataset within a time range",
             action: "Get dataset data",
-          },
-          {
-            name: "Get Latest Data",
-            value: "getLatestData",
-            description: "Get the most recent data point for a dataset",
-            action: "Get latest dataset data",
           },
           {
             name: "Get File",
@@ -93,6 +81,18 @@ export class Fingrid implements INodeType {
             description:
               "Get file-based data for a dataset within a time range",
             action: "Get dataset file data",
+          },
+          {
+            name: "Get Latest Data",
+            value: "getLatestData",
+            description: "Get the most recent data point for a dataset",
+            action: "Get latest dataset data",
+          },
+          {
+            name: "Search",
+            value: "search",
+            description: "Search / list all public datasets",
+            action: "Search datasets",
           },
         ],
         default: "get",
