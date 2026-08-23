@@ -94,10 +94,11 @@ export class Fingrid implements INodeType {
             action: "Get latest dataset data",
           },
           {
-            name: "Search",
+            name: "Get Many",
             value: "search",
-            description: "Search / list all public datasets",
-            action: "Search datasets",
+            description:
+              "Retrieve a list of datasets, optionally filtered by search text",
+            action: "Get many datasets",
           },
         ],
         default: "get",
@@ -360,7 +361,7 @@ export class Fingrid implements INodeType {
           },
         },
         description:
-          "Whether to return a streamlined version of the data without heavy metadata",
+          "Whether to return a simplified version of the response instead of the raw data",
       },
 
       // ----------------------------------

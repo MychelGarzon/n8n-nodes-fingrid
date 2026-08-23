@@ -35,7 +35,7 @@ You need a free Fingrid Open Data API key:
 
 - **Dataset**
   - Get — metadata for a single dataset by ID
-  - Search — search/list all public datasets
+  - Get Many — list all public datasets, optionally filtered by search text
   - Get Data — time series data for a dataset within a time range
   - Get Latest Data — most recent data point for a dataset
   - Get File — a single dataset file
