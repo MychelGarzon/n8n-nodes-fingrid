@@ -1,5 +1,11 @@
-import type { IDataObject, IExecuteFunctions } from "n8n-workflow";
-import { NodeOperationError } from "n8n-workflow";
+import type {
+  IDataObject,
+  IExecuteFunctions,
+  IHttpRequestOptions,
+  JsonObject,
+} from "n8n-workflow";
+
+import { NodeApiError, NodeOperationError } from "n8n-workflow";
 
 export const BASE_URL = "https://data.fingrid.fi/api";
 
@@ -11,10 +17,12 @@ export const PAGINATED_OPERATIONS = [
   "getUpdated",
 ];
 
-// Fingrid's API allows 10 requests/minute. When Return All auto-follows
-// pages, we throttle between requests the same way Fingrid's own official
-// client does, so a large fetch doesn't trip the rate limit mid-execution.
-const MIN_REQUEST_INTERVAL_MS = 6500;
+// Fingrid's own API docs (instructions + FAQ) confirm the real limit is
+// 1 request every 2 seconds per subscription (not the 10/minute figure
+// from the community Python client's config, which was overly cautious).
+// We throttle between requests during Return All so a large fetch
+// doesn't trip the limit mid-execution.
+const MIN_REQUEST_INTERVAL_MS = 2200;
 let lastRequestTimestamp = 0;
 
 async function sleep(ms: number): Promise<void> {
@@ -27,6 +35,39 @@ export async function respectRateLimit(): Promise<void> {
     await sleep(MIN_REQUEST_INTERVAL_MS - elapsed);
   }
   lastRequestTimestamp = Date.now();
+}
+
+/**
+ * Wraps an httpRequestWithAuthentication call so a 429 response surfaces
+ * Fingrid's own rate-limit message clearly, instead of n8n's generic HTTP
+ * error text. Confirmed via Fingrid's own FAQ: 429 means "Rate limit is
+ * exceeded. Try again in 2 seconds."
+ */
+async function requestWithRateLimitHandling(
+  this: IExecuteFunctions,
+  options: IHttpRequestOptions,
+): Promise<any> {
+  try {
+    return await this.helpers.httpRequestWithAuthentication.call(
+      this,
+      "fingridApi",
+      options,
+    );
+  } catch (error) {
+    const statusCode =
+      (error as { statusCode?: number }).statusCode ??
+      (error as { response?: { statusCode?: number } }).response?.statusCode;
+
+    if (statusCode === 429) {
+      throw new NodeApiError(this.getNode(), error as unknown as JsonObject, {
+        message: "Fingrid API rate limit exceeded",
+        description:
+          "Fingrid allows 1 request every 2 seconds per API key. Wait a moment and try again, or reduce Page Size if using Return All.",
+      });
+    }
+
+    throw error;
+  }
 }
 
 export interface RequestParams {
@@ -195,11 +236,12 @@ export async function fetchPaginated(
     await respectRateLimit();
 
     const pageQs: IDataObject = { ...qs, page, pageSize };
-    const response = await this.helpers.httpRequestWithAuthentication.call(
-      this,
-      "fingridApi",
-      { method: "GET", url: `${BASE_URL}${endpoint}`, qs: pageQs, json: true },
-    );
+    const response = await requestWithRateLimitHandling.call(this, {
+      method: "GET",
+      url: `${BASE_URL}${endpoint}`,
+      qs: pageQs,
+      json: true,
+    });
 
     const pageData = Array.isArray(response)
       ? (response as IDataObject[])
@@ -222,11 +264,12 @@ export async function fetchSingle(
   endpoint: string,
   qs: IDataObject,
 ): Promise<IDataObject[]> {
-  const responseData = await this.helpers.httpRequestWithAuthentication.call(
-    this,
-    "fingridApi",
-    { method: "GET", url: `${BASE_URL}${endpoint}`, qs, json: true },
-  );
+  const responseData = await requestWithRateLimitHandling.call(this, {
+    method: "GET",
+    url: `${BASE_URL}${endpoint}`,
+    qs,
+    json: true,
+  });
 
   if (Array.isArray(responseData)) {
     return responseData as IDataObject[];
