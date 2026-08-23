@@ -19,7 +19,6 @@
     "type": "git",
     "url": "git+https://github.com/MychelGarzon/n8n-nodes-fingrid.git"
   },
-  "main": "index.js",
   "scripts": {
     "build": "npx rimraf dist && tsc && npx gulp build:icons",
     "dev": "tsc --watch",

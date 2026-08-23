@@ -477,7 +477,17 @@ export class Fingrid implements INodeType {
           ? await fetchPaginated.call(this, endpoint, qs, i)
           : await fetchSingle.call(this, endpoint, qs, i);
 
-        const simplify = this.getNodeParameter("simplify", i, true) as boolean;
+        const SIMPLIFIABLE_OPERATIONS = [
+          "search",
+          "getData",
+          "getFileData",
+          "getMany",
+          "getUpdated",
+        ];
+
+        const simplify = SIMPLIFIABLE_OPERATIONS.includes(operation)
+          ? (this.getNodeParameter("simplify", i, true) as boolean)
+          : false;
 
         if (simplify) {
           results = results.map((item: IDataObject) => {

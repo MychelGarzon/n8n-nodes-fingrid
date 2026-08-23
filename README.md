@@ -29,7 +29,7 @@ You need a free Fingrid Open Data API key:
 1. Go to https://data.fingrid.fi/en and sign up (email only, no company/business account required)
 2. Approve the license and terms of use
 3. You'll receive a personal API key by email immediately
-4. Rate limits: 10 requests/minute, 10,000/day
+4. Rate limits: 1 request every 2 seconds, 10,000/day
 
 ## Resources & operations
 
@@ -41,8 +41,8 @@ You need a free Fingrid Open Data API key:
   - Get File — a single dataset file
   - Get File Data — file-based data within a time range
 - **Data (multiple datasets)**
-  - Get Multiple — time series data for several datasets in one call
-  - Get Updated — data for datasets changed within a recent period
+  - Get Many — time series data for several datasets in one call
+  - Get Recently Updated — data for datasets changed within a recent period
 - **System**
   - Get Active Notifications
   - Get Health Status

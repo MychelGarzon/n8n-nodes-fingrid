@@ -222,12 +222,11 @@ export function buildRequestParams(
 
   throw new NodeOperationError(
     this.getNode(),
-    `The resource "${resource}" is not recognized.`,
+    `The 'Resource' "${resource}" is not recognized.`,
     {
       itemIndex: i,
-      message: `The system 'Operation' "${operation}" is not recognized.`,
       description:
-        "Select a valid 'Operation' from the dropdown menu to continue.",
+        "Select a valid 'Resource' (Dataset, Data, or System) from the dropdown menu to continue.",
     },
   );
 }
