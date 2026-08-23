@@ -274,7 +274,50 @@ export class Fingrid implements INodeType {
       },
 
       // ----------------------------------
-      //         Shared: pagination / sorting
+      //         Shared: pagination
+      // ----------------------------------
+      {
+        displayName: "Return All",
+        name: "returnAll",
+        type: "boolean",
+        default: false,
+        displayOptions: {
+          show: {
+            operation: [
+              "search",
+              "getData",
+              "getFileData",
+              "getMultiple",
+              "getUpdated",
+            ],
+          },
+        },
+        description:
+          "Whether to return all results or only up to a given limit",
+      },
+      {
+        displayName: "Limit",
+        name: "limit",
+        type: "number",
+        typeOptions: { minValue: 1 },
+        default: 50,
+        displayOptions: {
+          show: {
+            operation: [
+              "search",
+              "getData",
+              "getFileData",
+              "getMultiple",
+              "getUpdated",
+            ],
+            returnAll: [false],
+          },
+        },
+        description: "Max number of results to return",
+      },
+
+      // ----------------------------------
+      //         Shared: additional options / sorting
       // ----------------------------------
       {
         displayName: "Additional Options",
@@ -299,7 +342,8 @@ export class Fingrid implements INodeType {
             name: "pageSize",
             type: "number",
             default: 20000,
-            description: "Number of rows to fetch per page (API max applies)",
+            description:
+              "Rows to request per page from the API when Return All is on. Fingrid's own client defaults range from 250 to 20000 depending on endpoint.",
           },
           {
             displayName: "Sort By",
