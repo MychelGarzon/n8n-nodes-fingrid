@@ -129,9 +129,11 @@ function buildDatasetRequest(
 
   throw new NodeOperationError(
     this.getNode(),
-    `Unknown dataset operation "${operation}"`,
+    `The dataset operation "${operation}" is not recognized.`,
     {
       itemIndex: i,
+      description:
+        "Select a valid operation from the dropdown menu to continue.",
     },
   );
 }
@@ -170,9 +172,11 @@ function buildDataRequest(
 
   throw new NodeOperationError(
     this.getNode(),
-    `Unknown data operation "${operation}"`,
+    `The data operation "${operation}" is not recognized.`,
     {
       itemIndex: i,
+      description:
+        "Select a valid operation from the dropdown menu to continue.",
     },
   );
 }
@@ -191,9 +195,11 @@ function buildSystemRequest(
 
   throw new NodeOperationError(
     this.getNode(),
-    `Unknown system operation "${operation}"`,
+    `The system operation "${operation}" is not recognized.`,
     {
       itemIndex: i,
+      description:
+        "Select a valid operation from the dropdown menu to continue.",
     },
   );
 }
@@ -211,9 +217,11 @@ export function buildRequestParams(
 
   throw new NodeOperationError(
     this.getNode(),
-    `Unknown resource "${resource}"`,
+    `The resource "${resource}" is not recognized.`,
     {
       itemIndex: i,
+      description:
+        "Select a valid resource (Dataset, Data, or System) from the dropdown menu to continue.",
     },
   );
 }
