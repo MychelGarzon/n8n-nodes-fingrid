@@ -128,9 +128,9 @@ export class Fingrid implements INodeType {
         default: "getHealthStatus",
       },
 
-      // ----------------------------------
+      // ----------------------------------------
       //         Data (multi-dataset) operations
-      // ----------------------------------
+      // ----------------------------------------
       {
         displayName: "Operation",
         name: "operation",
@@ -164,6 +164,7 @@ export class Fingrid implements INodeType {
         type: "string",
         default: "",
         required: true,
+        placeholder: "e.g. 74",
         displayOptions: {
           show: {
             resource: ["dataset"],
@@ -187,6 +188,7 @@ export class Fingrid implements INodeType {
         displayName: "Search Text",
         name: "search",
         type: "string",
+        placeholder: "e.g. windPower",
         default: "",
         displayOptions: {
           show: { resource: ["dataset"], operation: ["search"] },
@@ -199,6 +201,7 @@ export class Fingrid implements INodeType {
         name: "orderBy",
         type: "string",
         default: "id",
+        placeholder: "e.g. id",
         displayOptions: {
           show: { resource: ["dataset"], operation: ["search"] },
         },
@@ -212,11 +215,13 @@ export class Fingrid implements INodeType {
         displayName: "File ID",
         name: "fileId",
         type: "string",
+        placeholder: "e.g. 12345",
         default: "",
         required: true,
         displayOptions: {
           show: { resource: ["dataset"], operation: ["getFile"] },
         },
+        description: "The unique identifier of the file to retrieve.",
       },
 
       // ----------------------------------
@@ -256,6 +261,7 @@ export class Fingrid implements INodeType {
         displayName: "Dataset IDs",
         name: "datasets",
         type: "string",
+        placeholder: "e.g. 74,75,192",
         default: "",
         required: true,
         displayOptions: {
@@ -353,6 +359,7 @@ export class Fingrid implements INodeType {
             displayName: "Sort By",
             name: "sortBy",
             type: "string",
+            placeholder: "e.g. startTime",
             default: "startTime",
             description: "Field to sort the returned rows by",
           },
@@ -365,6 +372,7 @@ export class Fingrid implements INodeType {
               { name: "Descending", value: "desc" },
             ],
             default: "asc",
+            description: "Direction to sort the results.",
           },
         ],
       },
