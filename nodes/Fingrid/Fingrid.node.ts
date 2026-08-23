@@ -1,30 +1,17 @@
 import type {
-  IDataObject,
   IExecuteFunctions,
   INodeExecutionData,
   INodeType,
   INodeTypeDescription,
 } from "n8n-workflow";
-import { NodeOperationError } from "n8n-workflow";
-const BASE_URL = "https://data.fingrid.fi/api";
 
-// Fingrid's API allows 10 requests/minute. When Return All auto-follows
-// pages, we throttle between requests the same way Fingrid's own official
-// client does, so a large fetch doesn't trip the rate limit mid-execution.
-const MIN_REQUEST_INTERVAL_MS = 6500;
-let lastRequestTimestamp = 0;
+import {
+  buildRequestParams,
+  fetchPaginated,
+  fetchSingle,
+  PAGINATED_OPERATIONS,
+} from "./GenericFunctions";
 
-async function sleep(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-async function respectRateLimit(): Promise<void> {
-  const elapsed = Date.now() - lastRequestTimestamp;
-  if (elapsed < MIN_REQUEST_INTERVAL_MS) {
-    await sleep(MIN_REQUEST_INTERVAL_MS - elapsed);
-  }
-  lastRequestTimestamp = Date.now();
-}
 export class Fingrid implements INodeType {
   description: INodeTypeDescription = {
     displayName: "Fingrid",
@@ -393,222 +380,23 @@ export class Fingrid implements INodeType {
 
     for (let i = 0; i < items.length; i++) {
       try {
-        let endpoint = "";
-        const qs: IDataObject = {};
+        const { endpoint, qs } = buildRequestParams.call(
+          this,
+          resource,
+          operation,
+          i,
+        );
 
-        if (resource === "dataset") {
-          if (operation === "get") {
-            const datasetId = this.getNodeParameter("datasetId", i) as string;
-            endpoint = `/datasets/${datasetId}`;
-          } else if (operation === "search") {
-            endpoint = "/datasets";
-            const search = this.getNodeParameter("search", i) as string;
-            const orderBy = this.getNodeParameter("orderBy", i) as string;
-            if (search) qs.search = search;
-            if (orderBy) qs.orderBy = orderBy;
-            Object.assign(
-              qs,
-              this.getNodeParameter("additionalOptions", i, {}) as IDataObject,
-            );
-          } else if (operation === "getData") {
-            const datasetId = this.getNodeParameter("datasetId", i) as string;
-            endpoint = `/datasets/${datasetId}/data`;
-            qs.startTime = this.getNodeParameter("startTime", i) as string;
-            qs.endTime = this.getNodeParameter("endTime", i) as string;
-            Object.assign(
-              qs,
-              this.getNodeParameter("additionalOptions", i, {}) as IDataObject,
-            );
-          } else if (operation === "getLatestData") {
-            const datasetId = this.getNodeParameter("datasetId", i) as string;
-            endpoint = `/datasets/${datasetId}/data/latest`;
-          } else if (operation === "getFile") {
-            const datasetId = this.getNodeParameter("datasetId", i) as string;
-            const fileId = this.getNodeParameter("fileId", i) as string;
-            endpoint = `/datasets/${datasetId}/files/${fileId}`;
-          } else if (operation === "getFileData") {
-            const datasetId = this.getNodeParameter("datasetId", i) as string;
-            endpoint = `/datasets/${datasetId}/files`;
-            qs.startTime = this.getNodeParameter("startTime", i) as string;
-            qs.endTime = this.getNodeParameter("endTime", i) as string;
-            Object.assign(
-              qs,
-              this.getNodeParameter("additionalOptions", i, {}) as IDataObject,
-            );
-          } else {
-            throw new NodeOperationError(
-              this.getNode(),
-              `Unknown dataset operation "${operation}"`,
-              {
-                itemIndex: i,
-              },
-            );
-          }
-        } else if (resource === "data") {
-          const datasetsRaw = this.getNodeParameter("datasets", i) as string;
-          qs.datasets = datasetsRaw
-            .split(",")
-            .map((d) => d.trim())
-            .filter((d) => d.length > 0)
-            .join(",");
+        const results = PAGINATED_OPERATIONS.includes(operation)
+          ? await fetchPaginated.call(this, endpoint, qs, i)
+          : await fetchSingle.call(this, endpoint, qs);
 
-          if (operation === "getMultiple") {
-            endpoint = "/data";
-            qs.startTime = this.getNodeParameter("startTime", i) as string;
-            qs.endTime = this.getNodeParameter("endTime", i) as string;
-            Object.assign(
-              qs,
-              this.getNodeParameter("additionalOptions", i, {}) as IDataObject,
-            );
-          } else if (operation === "getUpdated") {
-            endpoint = "/data/updates";
-            qs.days = this.getNodeParameter("days", i) as number;
-            Object.assign(
-              qs,
-              this.getNodeParameter("additionalOptions", i, {}) as IDataObject,
-            );
-          } else {
-            throw new NodeOperationError(
-              this.getNode(),
-              `Unknown data operation "${operation}"`,
-              {
-                itemIndex: i,
-              },
-            );
-          }
-        } else if (resource === "system") {
-          if (operation === "getActiveNotifications") {
-            endpoint = "/notifications/active";
-          } else if (operation === "getHealthStatus") {
-            endpoint = "/health";
-          } else {
-            throw new NodeOperationError(
-              this.getNode(),
-              `Unknown system operation "${operation}"`,
-              {
-                itemIndex: i,
-              },
-            );
-          }
-        } else {
-          throw new NodeOperationError(
-            this.getNode(),
-            `Unknown resource "${resource}"`,
-            {
-              itemIndex: i,
-            },
-          );
-        }
-
-        const PAGINATED_OPERATIONS = [
-          "search",
-          "getData",
-          "getFileData",
-          "getMultiple",
-          "getUpdated",
-        ];
-
-        if (PAGINATED_OPERATIONS.includes(operation)) {
-          const returnAll = this.getNodeParameter(
-            "returnAll",
-            i,
-            false,
-          ) as boolean;
-          const limit = this.getNodeParameter("limit", i, 50) as number;
-          const additionalOptions = qs as IDataObject;
-          const pageSize = (additionalOptions.pageSize as number) || 20000;
-
-          const collected: IDataObject[] = [];
-          let page = 1;
-          let lastPage = 1;
-
-          do {
-            await respectRateLimit();
-
-            const pageQs: IDataObject = {
-              ...qs,
-              page,
-              pageSize,
-            };
-
-            const response =
-              await this.helpers.httpRequestWithAuthentication.call(
-                this,
-                "fingridApi",
-                {
-                  method: "GET",
-                  url: `${BASE_URL}${endpoint}`,
-                  qs: pageQs,
-                  json: true,
-                },
-              );
-
-            const pageData = Array.isArray(response)
-              ? (response as IDataObject[])
-              : (((response as IDataObject).data as
-                  IDataObject[] | undefined) ?? []);
-
-            collected.push(...pageData);
-
-            const pagination = (response as IDataObject).pagination as
-              IDataObject | undefined;
-            lastPage = pagination ? (pagination.lastPage as number) : 1;
-
-            if (!returnAll && collected.length >= limit) {
-              break;
-            }
-
-            page += 1;
-          } while (returnAll && page <= lastPage);
-
-          const results = returnAll ? collected : collected.slice(0, limit);
-
-          returnData.push(
-            ...results.map((item) => ({
-              json: item,
-              pairedItem: { item: i },
-            })),
-          );
-        } else {
-          const responseData =
-            await this.helpers.httpRequestWithAuthentication.call(
-              this,
-              "fingridApi",
-              {
-                method: "GET",
-                url: `${BASE_URL}${endpoint}`,
-                qs,
-                json: true,
-              },
-            );
-
-          if (Array.isArray(responseData)) {
-            returnData.push(
-              ...responseData.map((item: IDataObject) => ({
-                json: item,
-                pairedItem: { item: i },
-              })),
-            );
-          } else if (
-            responseData &&
-            typeof responseData === "object" &&
-            Array.isArray((responseData as IDataObject).data)
-          ) {
-            const dataArray = (responseData as IDataObject)
-              .data as IDataObject[];
-            returnData.push(
-              ...dataArray.map((item) => ({
-                json: item,
-                pairedItem: { item: i },
-              })),
-            );
-          } else {
-            returnData.push({
-              json: responseData as IDataObject,
-              pairedItem: { item: i },
-            });
-          }
-        }
+        returnData.push(
+          ...results.map((item) => ({
+            json: item,
+            pairedItem: { item: i },
+          })),
+        );
       } catch (error) {
         if (this.continueOnFail()) {
           returnData.push({
