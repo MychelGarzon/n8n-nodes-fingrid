@@ -9,11 +9,7 @@ import type {
   JsonObject,
 } from "n8n-workflow";
 
-import {
-  NodeApiError,
-  NodeConnectionTypes,
-  NodeOperationError,
-} from "n8n-workflow";
+import { NodeApiError, NodeConnectionTypes } from "n8n-workflow";
 
 import {
   buildRequestParams,
@@ -26,7 +22,7 @@ export class Fingrid implements INodeType {
   description: INodeTypeDescription = {
     displayName: "Fingrid",
     name: "fingrid",
-    icon: "file:fingrid.svg",
+    icon: { light: "file:fingrid.svg", dark: "file:fingrid.svg" },
     group: ["transform"],
     version: 1,
     usableAsTool: true,
