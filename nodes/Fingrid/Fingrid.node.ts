@@ -64,7 +64,7 @@ export class Fingrid implements INodeType {
             name: "Get",
             value: "get",
             description: "Get metadata for a single dataset",
-            action: "Get a dataset",
+            action: "Get dataset",
           },
           {
             name: "Get Data",
@@ -77,7 +77,7 @@ export class Fingrid implements INodeType {
             name: "Get File",
             value: "getFile",
             description: "Get a single dataset file",
-            action: "Get a dataset file",
+            action: "Get dataset file",
           },
           {
             name: "Get File Data",
