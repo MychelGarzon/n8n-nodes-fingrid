@@ -119,13 +119,13 @@ export class Fingrid implements INodeType {
             name: "Get Active Notifications",
             value: "getActiveNotifications",
             description: "Get currently active service notifications",
-            action: "Get active notifications",
+            action: "Get active system notifications",
           },
           {
             name: "Get Health Status",
             value: "getHealthStatus",
             description: "Get the health status of Fingrid Open Data services",
-            action: "Get health status",
+            action: "Get system health status",
           },
         ],
         default: "getHealthStatus",
@@ -142,10 +142,10 @@ export class Fingrid implements INodeType {
         displayOptions: { show: { resource: ["data"] } },
         options: [
           {
-            name: "Get Multiple",
-            value: "getMultiple",
+            name: "Get Many",
+            value: "getMany",
             description: "Get time series data for several datasets at once",
-            action: "Get data for multiple datasets",
+            action: "Get data for many datasets",
           },
           {
             name: "Get Updated",
@@ -155,7 +155,7 @@ export class Fingrid implements INodeType {
             action: "Get updated data",
           },
         ],
-        default: "getMultiple",
+        default: "getMany",
       },
 
       // ----------------------------------

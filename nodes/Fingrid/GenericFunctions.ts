@@ -13,7 +13,7 @@ export const PAGINATED_OPERATIONS = [
   "search",
   "getData",
   "getFileData",
-  "getMultiple",
+  "getMany",
   "getUpdated",
 ];
 
@@ -152,7 +152,7 @@ function buildDataRequest(
       .join(","),
   };
 
-  if (operation === "getMultiple") {
+  if (operation === "getMany") {
     qs.startTime = this.getNodeParameter("startTime", i) as string;
     qs.endTime = this.getNodeParameter("endTime", i) as string;
     Object.assign(
