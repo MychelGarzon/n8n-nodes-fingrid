@@ -290,6 +290,8 @@ export async function fetchSingle(
   qs: IDataObject,
   i: number,
 ): Promise<IDataObject[]> {
+  await respectRateLimit();
+
   const responseData = await requestWithRateLimitHandling.call(
     this,
     {
