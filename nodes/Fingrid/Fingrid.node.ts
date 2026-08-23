@@ -347,7 +347,7 @@ export class Fingrid implements INodeType {
             type: "number",
             default: 20000,
             description:
-              "Rows to request per page from the API when Return All is on. Fingrid's own client defaults range from 250 to 20000 depending on endpoint.",
+              "Rows to request per page from the API when 'Return All' is on. Fingrid's own client defaults range from 250 to 20000 depending on endpoint.",
           },
           {
             displayName: "Sort By",
