@@ -343,6 +343,25 @@ export class Fingrid implements INodeType {
         },
         description: "Max number of results to return",
       },
+      {
+        displayName: "Simplify",
+        name: "simplify",
+        type: "boolean",
+        default: true,
+        displayOptions: {
+          show: {
+            operation: [
+              "search",
+              "getData",
+              "getFileData",
+              "getMany",
+              "getUpdated",
+            ],
+          },
+        },
+        description:
+          "Whether to return a streamlined version of the data without heavy metadata",
+      },
 
       // ----------------------------------
       //         Shared: additional options / sorting
@@ -372,25 +391,6 @@ export class Fingrid implements INodeType {
             default: 20000,
             description:
               "Rows to request per page from the API when 'Return All' is on. Fingrid's own client defaults range from 250 to 20000 depending on endpoint.",
-          },
-          {
-            displayName: "Simplify",
-            name: "simplify",
-            type: "boolean",
-            default: true,
-            displayOptions: {
-              show: {
-                operation: [
-                  "search",
-                  "getData",
-                  "getFileData",
-                  "getMany",
-                  "getUpdated",
-                ],
-              },
-            },
-            description:
-              "Whether to return streamlined version of data without heavy metadata",
           },
           {
             displayName: "Sort By",
