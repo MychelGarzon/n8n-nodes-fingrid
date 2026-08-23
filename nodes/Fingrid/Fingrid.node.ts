@@ -380,8 +380,19 @@ export class Fingrid implements INodeType {
             name: "simplify",
             type: "boolean",
             default: true,
+            displayOptions: {
+              show: {
+                operation: [
+                  "search",
+                  "getData",
+                  "getFileData",
+                  "getMany",
+                  "getUpdated",
+                ],
+              },
+            },
             description:
-              "Whether to return a streamlined version of the data without heavy metadata",
+              "Whether to return streamlined version of data without heavy metadata",
           },
           {
             displayName: "Sort By",
@@ -468,12 +479,7 @@ export class Fingrid implements INodeType {
           ? await fetchPaginated.call(this, endpoint, qs, i)
           : await fetchSingle.call(this, endpoint, qs, i);
 
-        const additionalOptions = this.getNodeParameter(
-          "additionalOptions",
-          i,
-          {},
-        ) as IDataObject;
-        const simplify = additionalOptions.simplify !== false;
+        const simplify = this.getNodeParameter("simplify", i, true) as boolean;
 
         if (simplify) {
           results = results.map((item: IDataObject) => {
