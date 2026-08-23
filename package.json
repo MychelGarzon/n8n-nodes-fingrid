@@ -26,6 +26,7 @@
     "format": "prettier nodes credentials --write",
     "lint": "eslint nodes credentials package.json",
     "lintfix": "eslint nodes credentials package.json --fix",
+    "lint:n8n": "n8n-node lint",
     "prepublishOnly": "npm run build && npm run lint -c .eslintrc.prepublish.js nodes credentials package.json",
     "test": "jest "
   },
@@ -42,6 +43,7 @@
     ]
   },
   "devDependencies": {
+    "@n8n/node-cli": "^0.44.5",
     "@types/jest": "^30.0.0",
     "@typescript-eslint/parser": "~8.32.0",
     "eslint": "8.57.0",

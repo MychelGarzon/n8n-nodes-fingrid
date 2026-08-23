@@ -26,8 +26,14 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      - name: Lint (n8n official)
+        run: npm run lint:n8n
+
       - name: Build
         run: npm run build
 
+
       - name: Test
         run: npm test
+        
+
