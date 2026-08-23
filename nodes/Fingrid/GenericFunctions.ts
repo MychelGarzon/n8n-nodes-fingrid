@@ -134,8 +134,9 @@ function buildDatasetRequest(
     `The dataset operation "${operation}" is not recognized.`,
     {
       itemIndex: i,
+      message: `The dataset 'Operation' "${operation}" is not recognized.`,
       description:
-        "Select a valid operation from the dropdown menu to continue.",
+        "Select a valid 'Operation' from the dropdown menu to continue.",
     },
   );
 }
@@ -177,8 +178,9 @@ function buildDataRequest(
     `The data operation "${operation}" is not recognized.`,
     {
       itemIndex: i,
+      message: `The data 'Operation' "${operation}" is not recognized.`,
       description:
-        "Select a valid operation from the dropdown menu to continue.",
+        "Select a valid 'Operation' from the dropdown menu to continue.",
     },
   );
 }
@@ -200,8 +202,9 @@ function buildSystemRequest(
     `The system operation "${operation}" is not recognized.`,
     {
       itemIndex: i,
+      message: `The system 'Operation' "${operation}" is not recognized.`,
       description:
-        "Select a valid operation from the dropdown menu to continue.",
+        "Select a valid 'Operation' from the dropdown menu to continue.",
     },
   );
 }
@@ -222,8 +225,9 @@ export function buildRequestParams(
     `The resource "${resource}" is not recognized.`,
     {
       itemIndex: i,
+      message: `The 'Resource' "${resource}" is not recognized.`,
       description:
-        "Select a valid resource (Dataset, Data, or System) from the dropdown menu to continue.",
+        "Select a valid 'Resource' (Dataset, Data, or System) from the dropdown menu to continue.",
     },
   );
 }
