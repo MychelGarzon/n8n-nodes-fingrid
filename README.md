@@ -10,10 +10,13 @@ status, production/consumption, cross-border transmission, balancing and reserve
 
 ## Data license
 
-Fingrid's data is published under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
+Fingrid's data is published under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/legalcode)
+(see also the [human-readable summary](https://creativecommons.org/licenses/by/4.0/)).
 Attribution required when displaying or republishing the data:
 
 > Source Fingrid / data.fingrid.fi, license CC 4.0 BY
+
+This data is provided "as-is" without warranties of any kind, per the license terms.
 
 This node is free and open-source. If you plan to build a commercial product on top of
 Fingrid's data, review [Fingrid's Legal Terms](https://data.fingrid.fi/en) directly, as a
