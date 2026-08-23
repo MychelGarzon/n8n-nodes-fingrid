@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-fingrid",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "n8n community node for Fingrid Open Data — Finnish power grid and electricity market data",
   "keywords": [
     "n8n-community-node-package",
