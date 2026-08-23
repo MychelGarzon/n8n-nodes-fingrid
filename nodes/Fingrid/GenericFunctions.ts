@@ -63,7 +63,7 @@ async function requestWithRateLimitHandling(
       throw new NodeApiError(this.getNode(), error as unknown as JsonObject, {
         message: "Fingrid API rate limit exceeded",
         description:
-          "Fingrid allows 1 request every 2 seconds per API key. Wait a moment and try again, or reduce Page Size if using Return All",
+          "Fingrid allows 1 request every 2 seconds per API key. Wait a moment and try again, or reduce 'Page Size' if using 'Return All'.",
         itemIndex: i,
       });
     }
