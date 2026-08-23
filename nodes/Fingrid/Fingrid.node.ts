@@ -146,11 +146,11 @@ export class Fingrid implements INodeType {
             action: "Get data for many datasets",
           },
           {
-            name: "Get Updated",
+            name: "Get Recently Updated",
             value: "getUpdated",
             description:
-              "Get data for datasets that changed within recent period",
-            action: "Get updated data",
+              "Get data for datasets that changed within a recent period",
+            action: "Get recently updated data",
           },
         ],
         default: "getMany",
