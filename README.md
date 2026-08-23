@@ -1,5 +1,7 @@
 # n8n-nodes-fingrid
 
+[![Quality gate status](https://sonarcloud.io/api/project_badges/measure?project=MychelGarzon_n8n-nodes-fingrid&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=MychelGarzon_n8n-nodes-fingrid)
+
 n8n community node for [Fingrid Open Data](https://data.fingrid.fi/en) — real-time and historical
 Finnish power grid and electricity market data (frequency, power system state, electricity shortage
 status, production/consumption, cross-border transmission, balancing and reserve markets).
@@ -12,6 +14,10 @@ Fingrid's data is published under [CC BY 4.0](https://creativecommons.org/licens
 Attribution required when displaying or republishing the data:
 
 > Source Fingrid / data.fingrid.fi, license CC 4.0 BY
+
+This node is free and open-source. If you plan to build a commercial product on top of
+Fingrid's data, review [Fingrid's Legal Terms](https://data.fingrid.fi/en) directly, as a
+separate general terms page contains language that may not apply to non-commercial use.
 
 ## Prerequisites
 
