@@ -6,6 +6,13 @@ import type {
   INodeTypeDescription,
   ILoadOptionsFunctions,
   INodeListSearchResult,
+  JsonObject,
+} from "n8n-workflow";
+
+import {
+  NodeApiError,
+  NodeConnectionTypes,
+  NodeOperationError,
 } from "n8n-workflow";
 
 import {
@@ -22,14 +29,17 @@ export class Fingrid implements INodeType {
     icon: "file:fingrid.svg",
     group: ["transform"],
     version: 1,
+    usableAsTool: true,
     subtitle: '={{$parameter["operation"] + ": " + $parameter["resource"]}}',
     description:
       "Read Finnish power grid and electricity market data from Fingrid Open Data",
     defaults: {
       name: "Fingrid",
     },
-    inputs: ["main"],
-    outputs: ["main"],
+    // eslint-disable-next-line n8n-nodes-base/node-class-description-inputs-wrong-regular-node
+    inputs: [NodeConnectionTypes.Main],
+    // eslint-disable-next-line n8n-nodes-base/node-class-description-outputs-wrong
+    outputs: [NodeConnectionTypes.Main],
     credentials: [
       {
         name: "fingridApi",
@@ -515,7 +525,15 @@ export class Fingrid implements INodeType {
           });
           continue;
         }
-        throw error;
+        if (
+          error instanceof NodeApiError ||
+          error instanceof NodeOperationError
+        ) {
+          throw error;
+        }
+        throw new NodeApiError(this.getNode(), error as unknown as JsonObject, {
+          itemIndex: i,
+        });
       }
     }
 
