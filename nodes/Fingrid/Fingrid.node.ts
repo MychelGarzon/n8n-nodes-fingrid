@@ -255,7 +255,7 @@ export class Fingrid implements INodeType {
         required: true,
         displayOptions: {
           show: {
-            operation: ["getData", "getFileData", "getMultiple"],
+            operation: ["getData", "getFileData", "getMany"],
           },
         },
         description: "Start of the time range to fetch, in ISO 8601 format",
@@ -268,7 +268,7 @@ export class Fingrid implements INodeType {
         required: true,
         displayOptions: {
           show: {
-            operation: ["getData", "getFileData", "getMultiple"],
+            operation: ["getData", "getFileData", "getMany"],
           },
         },
         description: "End of the time range to fetch, in ISO 8601 format",
@@ -287,7 +287,7 @@ export class Fingrid implements INodeType {
         displayOptions: {
           show: {
             resource: ["data"],
-            operation: ["getMultiple", "getUpdated"],
+            operation: ["getMany", "getUpdated"],
           },
         },
         description: "Comma-separated list of dataset IDs, e.g. 74,75,192",
@@ -317,7 +317,7 @@ export class Fingrid implements INodeType {
               "search",
               "getData",
               "getFileData",
-              "getMultiple",
+              "getMany",
               "getUpdated",
             ],
           },
@@ -337,7 +337,7 @@ export class Fingrid implements INodeType {
               "search",
               "getData",
               "getFileData",
-              "getMultiple",
+              "getMany",
               "getUpdated",
             ],
             returnAll: [false],
@@ -361,7 +361,7 @@ export class Fingrid implements INodeType {
               "search",
               "getData",
               "getFileData",
-              "getMultiple",
+              "getMany",
               "getUpdated",
             ],
           },
