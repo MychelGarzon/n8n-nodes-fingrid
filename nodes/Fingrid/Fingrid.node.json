@@ -1,0 +1,18 @@
+{
+	"node": "n8n-nodes-fingrid.fingrid",
+	"nodeVersion": "1.0",
+	"codexVersion": "1.0",
+	"categories": ["Data & Storage"],
+	"resources": {
+		"credentialDocumentation": [
+			{
+				"url": "https://github.com/MychelGarzon/n8n-nodes-fingrid?tab=readme-ov-file#prerequisites"
+			}
+		],
+		"primaryDocumentation": [
+			{
+				"url": "https://github.com/MychelGarzon/n8n-nodes-fingrid?tab=readme-ov-file"
+			}
+		]
+	}
+}

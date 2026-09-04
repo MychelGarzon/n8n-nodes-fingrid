@@ -8,6 +8,10 @@ status, production/consumption, cross-border transmission, balancing and reserve
 
 **Not affiliated with, endorsed by, or sponsored by Fingrid Oyj.**
 
+## Installation
+
+In n8n, go to **Settings → Community Nodes → Install**, enter `n8n-nodes-fingrid`, and click **Install**.
+
 ## Data license
 
 Fingrid's data is published under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/legalcode)
@@ -47,9 +51,28 @@ You need a free Fingrid Open Data API key:
   - Get Active Notifications
   - Get Health Status
 
+## Usage example
+
+1. Add the **Fingrid** node to your workflow.
+2. Set **Resource** to `Dataset` and **Operation** to `Get Data`.
+3. Set **Dataset ID** to `74` (Electricity production in Finland).
+4. Set a **Start Time** and **End Time**, for example `2026-08-01T00:00:00Z` to `2026-08-02T00:00:00Z`.
+5. Run the node.
+
+The output is a list of JSON objects, one per time interval, for example:
+
+```json
+{
+  "value": 9605.14,
+  "startTime": "2026-08-01T23:45:00.000Z",
+  "endTime": "2026-08-02T00:00:00.000Z",
+  "datasetId": 74
+}
+```
+
 ## Finding dataset IDs
 
-Use the **Dataset → Search** operation (with or without search text) to browse available datasets
+Use the **Dataset → Get Many** operation (with or without search text) to browse available datasets
 and find their numeric IDs, or browse https://data.fingrid.fi/en/datasets in a browser.
 
 ## Development
